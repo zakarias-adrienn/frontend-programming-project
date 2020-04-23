@@ -229,8 +229,6 @@ export function Board({
         // ki fog lépni
         setSelectedForMoving(cell);
       } else if (selectedForMoving == null) {
-        let winner = activePlayer === "red" ? "kék" : "piros";
-        alert("Nyert a " + winner);
         return;
       } else {
         // lépjen
