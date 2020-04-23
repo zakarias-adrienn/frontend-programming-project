@@ -1,95 +1,102 @@
-import React from 'react';
+import React from "react";
 import { useSelector } from "react-redux";
 
-export function DeadCharacters(){
+export function DeadCharacters() {
   const blueDeadEnemies = useSelector(state => state.blueDead);
   const redDeadEnemies = useSelector(state => state.redDead);
 
-
-  function calculateBackground(cell){
-      if(cell.placedNumber===10){
-        if(cell.color==='blue'){
-          return "assets/pieces-1-B.jpg";
-        }
-        return "assets/pieces-1-R.jpg";
-      } else if(cell.placedNumber===2){
-        if(cell.color==='blue'){
-          return "assets/pieces-2-B.jpg";
-        }
-        return "assets/pieces-2-R.jpg";
-      } else if(cell.placedNumber===3){
-        if(cell.color==='blue'){
-          return "assets/pieces-3-B.jpg";
-        }
-        return "assets/pieces-3-R.jpg";
-      } else if(cell.placedNumber===4){
-        if(cell.color==='blue'){
-          return "assets/pieces-4-B.jpg";
-        }
-        return "assets/pieces-4-R.jpg";
-      } else if(cell.placedNumber===5){
-        if(cell.color==='blue'){
-          return "assets/pieces-5-B.jpg";
-        }
-        return "assets/pieces-5-R.jpg";
-      } else if(cell.placedNumber===6){
-        if(cell.color==='blue'){
-          return "assets/pieces-6-B.jpg";
-        }
-        return "assets/pieces-6-R.jpg";
-      } else if(cell.placedNumber===7){
-        if(cell.color==='blue'){
-          return "assets/pieces-7-B.jpg";
-        }
-        return "assets/pieces-7-R.jpg";
-      } else if(cell.placedNumber===8){
-        if(cell.color==='blue'){
-          return "assets/pieces-8-B.jpg";
-        }
-        return "assets/pieces-8-R.jpg";
-      } else if(cell.placedNumber===9){
-        if(cell.color==='blue'){
-          return "assets/pieces-9-B.jpg";
-        }
-        return "assets/pieces-9-R.jpg";
-      } else if(cell.placedNumber===-1){
-        if(cell.color==='blue'){
-          return "assets/pieces-F-B.jpg";
-        }
-        return "assets/pieces-F-R.jpg";
-      } else if(cell.placedNumber===1){
-        if(cell.color==='blue'){
-          return "assets/pieces-S-B.jpg";
-        }
-        return "assets/pieces-S-R.jpg";
-      } else if(cell.placedNumber===0){
-        if(cell.color==='blue'){
-          return "assets/pieces-B-B.jpg";
-        }
-        return "assets/pieces-B-R.jpg";
+  function calculateBackground(cell) {
+    if (cell.placedNumber === 10) {
+      if (cell.color === "blue") {
+        return "assets/pieces-1-B.jpg";
       }
+      return "assets/pieces-1-R.jpg";
+    } else if (cell.placedNumber === 2) {
+      if (cell.color === "blue") {
+        return "assets/pieces-2-B.jpg";
+      }
+      return "assets/pieces-2-R.jpg";
+    } else if (cell.placedNumber === 3) {
+      if (cell.color === "blue") {
+        return "assets/pieces-3-B.jpg";
+      }
+      return "assets/pieces-3-R.jpg";
+    } else if (cell.placedNumber === 4) {
+      if (cell.color === "blue") {
+        return "assets/pieces-4-B.jpg";
+      }
+      return "assets/pieces-4-R.jpg";
+    } else if (cell.placedNumber === 5) {
+      if (cell.color === "blue") {
+        return "assets/pieces-5-B.jpg";
+      }
+      return "assets/pieces-5-R.jpg";
+    } else if (cell.placedNumber === 6) {
+      if (cell.color === "blue") {
+        return "assets/pieces-6-B.jpg";
+      }
+      return "assets/pieces-6-R.jpg";
+    } else if (cell.placedNumber === 7) {
+      if (cell.color === "blue") {
+        return "assets/pieces-7-B.jpg";
+      }
+      return "assets/pieces-7-R.jpg";
+    } else if (cell.placedNumber === 8) {
+      if (cell.color === "blue") {
+        return "assets/pieces-8-B.jpg";
+      }
+      return "assets/pieces-8-R.jpg";
+    } else if (cell.placedNumber === 9) {
+      if (cell.color === "blue") {
+        return "assets/pieces-9-B.jpg";
+      }
+      return "assets/pieces-9-R.jpg";
+    } else if (cell.placedNumber === -1) {
+      if (cell.color === "blue") {
+        return "assets/pieces-F-B.jpg";
+      }
+      return "assets/pieces-F-R.jpg";
+    } else if (cell.placedNumber === 1) {
+      if (cell.color === "blue") {
+        return "assets/pieces-S-B.jpg";
+      }
+      return "assets/pieces-S-R.jpg";
+    } else if (cell.placedNumber === 0) {
+      if (cell.color === "blue") {
+        return "assets/pieces-B-B.jpg";
+      }
+      return "assets/pieces-B-R.jpg";
+    }
   }
-  
-  function getBlueList(){
-    let ps = blueDeadEnemies.map(enemy => <img key={enemy.id} src={calculateBackground(enemy)} alt=""/>);
+
+  function getBlueList() {
+    let ps = blueDeadEnemies.map(enemy => (
+      <img key={enemy.id} src={calculateBackground(enemy)} alt="" />
+    ));
     return ps;
   }
 
-  function getRedList(){
-    let ps = redDeadEnemies.map(enemy => <img key={enemy.id} src={calculateBackground(enemy)} alt=""/>);
+  function getRedList() {
+    let ps = redDeadEnemies.map(enemy => (
+      <img key={enemy.id} src={calculateBackground(enemy)} alt="" />
+    ));
     return ps;
   }
 
   return (
     <>
-      <div  style={{fontSize: "30px"}}><span style={{color: "blue"}}>Kék</span> levett bábúi: 
-      <br/><br/>
-      {getBlueList()}
+      <div style={{ fontSize: "30px" }}>
+        <span style={{ color: "blue" }}>Kék</span> levett bábúi:
+        <br />
+        <br />
+        {getBlueList()}
       </div>
-      <br/>
-      <div  style={{fontSize: "30px"}}><span style={{color: "red"}}>Piros</span> levett bábúi: 
-      <br/><br/>
-      {getRedList()}
+      <br />
+      <div style={{ fontSize: "30px" }}>
+        <span style={{ color: "red" }}>Piros</span> levett bábúi:
+        <br />
+        <br />
+        {getRedList()}
       </div>
     </>
   );
