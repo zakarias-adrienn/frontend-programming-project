@@ -327,10 +327,12 @@ export function Board({
           // ha placedNumber mindenhol -1 és 0 akkor is nyert
           if (weaker && weaker.placedNumber === -1) {
             let winner = stronger.color === "red" ? "piros" : "kék";
-            setWinner(winner);
-            setJelenit(false);
-            setSelectedForMoving(null);
-            setIsGameOver(true);
+            setTimeout(()=>{
+              setWinner(winner);
+              setJelenit(false);
+              setSelectedForMoving(null);
+              setIsGameOver(true);
+            }, 1000);
             // elérhetővé válik a vissza gomb
             return;
           }
@@ -428,7 +430,7 @@ export function Board({
           </b>
         </p>
       ) : null}
-      {winner!==null ? <p style={winner==="kék" ? {color: 'blue', fontSize: "30px", fontWeight: "bold"} : {color: 'red',  fontSize: "30px", fontWeight: "bold"}}>Nyert a {winner}</p> : null}
+      {winner!==null ? <p style={winner==="kék" ? {color: 'blue', fontSize: "30px", fontWeight: "bold"} : {color: 'red',  fontSize: "30px", fontWeight: "bold"}}>Nyert a {winner}!</p> : null}
     </div>
   );
 }
