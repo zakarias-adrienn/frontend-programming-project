@@ -26,11 +26,13 @@ export function Board({
   const activePlayer = useSelector(state => state.activePlayer);
   const dispatch = useDispatch();
   const [selectedForMoving, setSelectedForMoving] = useState(null);
+  const [isGameOver, setIsGameOver] = useState(false);
   let harc = false;
   const [jelenit, setJelenit] = useState(false);
   const [goal, setGoal] = useState(null);
   const [firstFighter, setFirstFighter] = useState(-2);
   const [secondFighter, setSecondFighter] = useState(-2);
+  const [winner, setWinner] = useState(null);
 
   // valahol fel kellene használni
   // az új board nem elérhető csak következő rerenderkor ezért nem tudom ezt vizsgálni :(
@@ -40,7 +42,7 @@ export function Board({
       for (let j = 0; j < row.length; ++j) {
         if (
           board[i][j].color != null &&
-          board[i][j].color !== activePlayer &&
+          board[i][j].color === activePlayer &&
           board[i][j].placedNumber !== -1 &&
           board[i][j].placedNumber !== 0
         ) {
@@ -51,6 +53,14 @@ export function Board({
     }
 
     return true;
+  }
+
+  if(nemMaradtLepo() && state==='IN_GAME' && !isGameOver){
+    console.log("nem maradt lépő");
+    setIsGameOver(true);
+    let winner = activePlayer === "red" ? "kék" : "piros";
+    setWinner(winner);
+    // elérhetővé válik a vissza gomb
   }
 
   function atugorElemet(cell1, cell2) {
@@ -181,6 +191,9 @@ export function Board({
 
   function handleTdClick(e) {
     // ha még nincs háttere akkor lehelyezzük
+    if(isGameOver){
+      return;
+    }
     let x = e.target.closest("tr").rowIndex;
     let y = e.target.cellIndex;
     let cell = board[x][y];
@@ -314,7 +327,10 @@ export function Board({
           // ha placedNumber mindenhol -1 és 0 akkor is nyert
           if (weaker && weaker.placedNumber === -1) {
             let winner = stronger.color === "red" ? "piros" : "kék";
-            alert("Nyert a " + winner);
+            setWinner(winner);
+            setJelenit(false);
+            setSelectedForMoving(null);
+            setIsGameOver(true);
             // elérhetővé válik a vissza gomb
             return;
           }
@@ -342,10 +358,6 @@ export function Board({
               } else {
                 dispatch(redDead(weaker));
               }
-            }
-            // ez nem fut le
-            if (nemMaradtLepo()) {
-              alert("He");
             }
           }, 3000);
           console.log("Harcosok");
@@ -384,6 +396,7 @@ export function Board({
       >
         <tbody>{rows}</tbody>
       </table>
+      <br/>
       {selectedForMoving ? (
         <output
           style={activePlayer === "red" ? { color: "red" } : { color: "blue" }}
@@ -391,9 +404,9 @@ export function Board({
           Lépésre választott: {selectedForMoving.placedNumber}{" "}
         </output>
       ) : null}
-      <br />
+      <br/>
       {jelenit ? (
-        <p style={{ fontSize: "20px" }}>
+        <p style={{ fontSize: "30px" }}>
           <b>
             {" "}
             HARC:{" "}
@@ -402,7 +415,7 @@ export function Board({
                 activePlayer === "red" ? { color: "red" } : { color: "blue" }
               }
             >
-              {firstFighter}
+              {firstFighter!==0 && firstFighter!==-1 ? firstFighter : firstFighter===0 ? "bomba" : "zászló"}
             </span>{" "}
             VS{" "}
             <span
@@ -410,11 +423,12 @@ export function Board({
                 activePlayer === "red" ? { color: "blue" } : { color: "red" }
               }
             >
-              {secondFighter}
+              {secondFighter!==0 && secondFighter!==-1 ? secondFighter : secondFighter===0 ? "bomba" : "zászló"}
             </span>{" "}
           </b>
         </p>
       ) : null}
+      {winner!==null ? <p style={winner==="kék" ? {color: 'blue', fontSize: "30px", fontWeight: "bold"} : {color: 'red',  fontSize: "30px", fontWeight: "bold"}}>Nyert a {winner}</p> : null}
     </div>
   );
 }

@@ -42,22 +42,21 @@ export function MainPage({ state, onChangeState, room_number }) {
         <p>
           Minden bábu csak 1-et léphet előre, hátra, jobbra, balra. A zászló és
           az akna értelemszerűen nem tud lépni. A táblán lehetnek olyan mezők,
-          amelyre nem lehet lépni (tó).{" "}
+          amelyre <b>nem lehet lépni (tó)</b>.{" "}
         </p>
         <div className="ui container" style={{ width: "500px" }}>
           <p>Van pár speciális figura:</p>
           <ul>
             <li>
-              a 2-es a felderítő, ő akárhány mezőt átugorva léphet vagy
+              a <b>2-es</b> a felderítő, ő akárhány mezőt átugorva léphet vagy
               támadhat. Tavat ő sem tudja átugrani.
             </li>
-            <li>a 3-as az aknász. Csak ő tudja hatástalanítani a bombát</li>
+            <li>a <b>3-as</b> az aknász. Csak ő tudja hatástalanítani a bombát</li>
             <li>
-              az 1-es a kém, ha ő támadja meg az ellenfél 10-esét, akkor megöli.
+              az <b>1-es</b> a kém, ha ő támadja meg az ellenfél <b>10-esét</b>, akkor megöli.
             </li>
             <li>
-              bomba: aki rálép, az felrobban, a bomba viszont megmarad. Csak az
-              aknász képes leszedni a tábláról.
+              <b>bomba:</b> aki rálép, az felrobban, a bomba viszont megmarad. Csak az <b>aknász</b> képes leszedni a tábláról.
             </li>
           </ul>
         </div>

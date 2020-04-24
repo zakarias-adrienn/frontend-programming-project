@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { DeadCharacters } from "./DeadCharacters";
 import { Board } from "./Board";
 import { useDispatch } from "react-redux";
