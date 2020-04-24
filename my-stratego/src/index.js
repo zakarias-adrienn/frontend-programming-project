@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import { Provider } from "react-redux";
 import { createStore } from "redux";
+import { composeWithDevTools } from "redux-devtools-extension";
 import {
   NEXT_PLAYER,
   MOVE_CHARACTER,
@@ -58,7 +59,7 @@ const rootReducer = (state = getInitialState(), action) => {
   }
 };
 
-const store = createStore(rootReducer, getInitialState());
+const store = createStore(rootReducer, getInitialState(), composeWithDevTools());
 
 console.log(store.getState());
 const unsubscribe = store.subscribe(() => console.log(store.getState()));
