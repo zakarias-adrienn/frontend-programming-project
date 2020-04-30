@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Characters } from "./Characters";
 import { Board } from "./Board";
 import { useDispatch } from "react-redux";
-import { startPlay } from "../actions";
+import { startPlay } from "../state/actions";
 
 export function PreparingArea({ state, onChangeState }) {
   const [chosenCharacter, setChosenCharacter] = useState(null);

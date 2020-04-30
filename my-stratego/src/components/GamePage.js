@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { DeadCharacters } from "./DeadCharacters";
 import { Board } from "./Board";
 import { useDispatch } from "react-redux";
-import { resetBoard } from "../actions";
+import { resetBoard } from "../state/actions";
 import { useSelector } from "react-redux";
 
 export function GamePage({ state, onChangeState }) {

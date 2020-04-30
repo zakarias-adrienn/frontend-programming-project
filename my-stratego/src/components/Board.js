@@ -8,7 +8,7 @@ import {
   fightComes,
   blueDead,
   redDead
-} from "../actions";
+} from "../state/actions";
 
 export function Board({
   numbersNeeded,
@@ -55,7 +55,7 @@ export function Board({
     return true;
   }
 
-  if(nemMaradtLepo() && state==='IN_GAME' && !isGameOver){
+  if (nemMaradtLepo() && state === "IN_GAME" && !isGameOver) {
     console.log("nem maradt lépő");
     setIsGameOver(true);
     let winner = activePlayer === "red" ? "kék" : "piros";
@@ -191,7 +191,7 @@ export function Board({
 
   function handleTdClick(e) {
     // ha még nincs háttere akkor lehelyezzük
-    if(isGameOver){
+    if (isGameOver) {
       return;
     }
     let x = e.target.closest("tr").rowIndex;
@@ -327,7 +327,7 @@ export function Board({
           // ha placedNumber mindenhol -1 és 0 akkor is nyert
           if (weaker && weaker.placedNumber === -1) {
             let winner = stronger.color === "red" ? "piros" : "kék";
-            setTimeout(()=>{
+            setTimeout(() => {
               setWinner(winner);
               setJelenit(false);
               setSelectedForMoving(null);
@@ -398,7 +398,7 @@ export function Board({
       >
         <tbody>{rows}</tbody>
       </table>
-      <br/>
+      <br />
       {selectedForMoving ? (
         <output
           style={activePlayer === "red" ? { color: "red" } : { color: "blue" }}
@@ -406,7 +406,7 @@ export function Board({
           Lépésre választott: {selectedForMoving.placedNumber}{" "}
         </output>
       ) : null}
-      <br/>
+      <br />
       {jelenit ? (
         <p style={{ fontSize: "30px" }}>
           <b>
@@ -417,7 +417,11 @@ export function Board({
                 activePlayer === "red" ? { color: "red" } : { color: "blue" }
               }
             >
-              {firstFighter!==0 && firstFighter!==-1 ? firstFighter : firstFighter===0 ? "bomba" : "zászló"}
+              {firstFighter !== 0 && firstFighter !== -1
+                ? firstFighter
+                : firstFighter === 0
+                ? "bomba"
+                : "zászló"}
             </span>{" "}
             VS{" "}
             <span
@@ -425,12 +429,26 @@ export function Board({
                 activePlayer === "red" ? { color: "blue" } : { color: "red" }
               }
             >
-              {secondFighter!==0 && secondFighter!==-1 ? secondFighter : secondFighter===0 ? "bomba" : "zászló"}
+              {secondFighter !== 0 && secondFighter !== -1
+                ? secondFighter
+                : secondFighter === 0
+                ? "bomba"
+                : "zászló"}
             </span>{" "}
           </b>
         </p>
       ) : null}
-      {winner!==null ? <p style={winner==="kék" ? {color: 'blue', fontSize: "30px", fontWeight: "bold"} : {color: 'red',  fontSize: "30px", fontWeight: "bold"}}>Nyert a {winner}!</p> : null}
+      {winner !== null ? (
+        <p
+          style={
+            winner === "kék"
+              ? { color: "blue", fontSize: "30px", fontWeight: "bold" }
+              : { color: "red", fontSize: "30px", fontWeight: "bold" }
+          }
+        >
+          Nyert a {winner}!
+        </p>
+      ) : null}
     </div>
   );
 }
