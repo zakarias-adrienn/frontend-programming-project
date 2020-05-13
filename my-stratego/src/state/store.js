@@ -98,7 +98,7 @@ export const mainReducer = (state = getInitialState().game, action) => {
     case NEXT_PLAYER:
       return {
         ...state,
-        activePlayer: nextPlayerComes(state.board, action.payload)
+        activePlayer: nextPlayerComes(state.activePlayer, action.payload)
       };
     case FIGHT_COMES:
       return { ...state, board: afterFight(state.board, action.payload) };

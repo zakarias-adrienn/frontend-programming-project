@@ -80,9 +80,9 @@ export function redIsDead(redDead, cell) {
   return [...redDead, cell];
 }
 
-export function nextPlayerComes(board, activePlayer) {
+export function nextPlayerComes(player, activePlayer) {
   let newPlayer = null;
-  if (activePlayer === "red") {
+  if (player === "red") {
     newPlayer = "blue";
   } else {
     newPlayer = "red";

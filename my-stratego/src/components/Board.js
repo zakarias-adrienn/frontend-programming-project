@@ -8,7 +8,8 @@ import {
   fightComes,
   blueDead,
   redDead,
-  showPossibilities
+  showPossibilities,
+  removeSelections
 } from "../state/actions";
 
 export function atugorElemet(cell1, cell2, board) {
@@ -55,10 +56,8 @@ export function atugorElemet(cell1, cell2, board) {
 export function Board({
   numbersNeeded,
   setNumbersNeeded,
-  removeSelections,
-  disableButton,
-  wasFlag,
   setDisableButton,
+  disableButton,
   chosenOne,
   setChosenOne,
   placedCharacterNumber,

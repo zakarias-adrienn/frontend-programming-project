@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 
 export function GamePage() {
   const dispatch = useDispatch();
-  const activePlayer = useSelector(state => state.activePlayer);
+  const activePlayer = useSelector(state => state.game.activePlayer);
   const gameState = useSelector(state => state.gameState);
 
   return (
