@@ -4,35 +4,36 @@ import { MainPage } from "./components/MainPage";
 import { WaitingArea } from "./components/WaitingArea";
 import { GamePage } from "./components/GamePage";
 import { PreparingArea } from "./components/PreparingArea";
+import { useSelector } from 'react-redux';
 
 function App() {
 
- const [state, setState] = useState('MAIN_PAGE');
+ const gameState = useSelector(state => state.gameState);
  const [room_number, setRoomNumber] = useState(0);
 
 
-  if(state==='MAIN_PAGE'){
+  if(gameState==='MAIN_PAGE'){
     return (
       <div className="ui center aligned container">
-          <MainPage state={state} onChangeState={setState} room_number={room_number}></MainPage>
+          <MainPage room_number={room_number}></MainPage>
       </div>
     );
-  } else if(state==='WAITING_FOR_SECOND_PLAYER'){
+  } else if(gameState==='WAITING_FOR_SECOND_PLAYER'){
     return (
       <div className="ui center aligned container">
-          <WaitingArea state={state} onChangeState={setState} room_number={room_number} setRoomNumber={setRoomNumber}></WaitingArea>
+          <WaitingArea room_number={room_number} setRoomNumber={setRoomNumber}></WaitingArea>
       </div>
     );
-  } else if(state==='PREPARE_GAME'){
+  } else if(gameState==='PREPARE_GAME'){
     return (
       <div className="ui center aligned container">
-          <PreparingArea state={state} onChangeState={setState}></PreparingArea>
+          <PreparingArea></PreparingArea>
       </div>
     );
-  } else if(state==='IN_GAME'){
+  } else if(gameState==='IN_GAME'){
     return (
       <div className="ui center aligned container">
-          <GamePage state={state} onChangeState={setState}></GamePage>
+          <GamePage></GamePage>
       </div>
     );
   }

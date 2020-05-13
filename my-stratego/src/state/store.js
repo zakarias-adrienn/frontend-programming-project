@@ -1,15 +1,16 @@
 import { createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
+import { combineReducers } from 'redux'
 import {
   NEXT_PLAYER,
   MOVE_CHARACTER,
   REMOVE_CHARACTER,
   RESET_BOARD,
   placeACharacter,
+  changeTheState,
   afterFight,
   removeACharacter,
   PLACE_CHARACTER,
-  getInitialState,
   START_PLAY,
   startAPLay,
   afterMove,
@@ -18,17 +19,73 @@ import {
   BLUE_DEAD,
   blueIsDead,
   RED_DEAD,
-  redIsDead
+  redIsDead,
+  CHANGE_STATE,
+  SHOW_POSSIBILITIES,
+  showThePossibilities,
+  removeTheSelections,
+  REMOVE_SELECTIONS
 } from "./actions";
 
-export const rootReducer = (state = getInitialState(), action) => {
+let cells = [];
+let k = 1;
+for (let i = 0; i < 10; ++i) {
+  let row = [];
+  for (let j = 0; j < 10; ++j) {
+    let lake = false;
+    let cP = false;
+    if (
+      (i === 4 && j === 2) ||
+      (i === 4 && j === 3) ||
+      (i === 5 && j === 2) ||
+      (i === 5 && j === 3) ||
+      (i === 4 && j === 6) ||
+      (i === 4 && j === 7) ||
+      (i === 5 && j === 6) ||
+      (i === 5 && j === 7)
+    ) {
+      lake = true;
+    }
+    if (i >= 6) {
+      cP = true;
+    }
+    let cell = {
+      id: k,
+      x: i,
+      y: j,
+      isLake: lake,
+      canPlace: cP, // csak az alsó 4 sorba szabad
+      placedNumber: null,
+      color: null,
+      border: false
+    };
+    row.push(cell);
+    if (row.length === 10) {
+      cells.push(row);
+      row = [];
+    }
+    k = k + 1;
+  }
+}
+
+export const getInitialState = () => ({
+  gameState: 'MAIN_PAGE',
+  game: {
+    activePlayer: "red",
+    board: cells,
+    blueDead: [],
+    redDead: []
+  }
+});
+
+export const mainReducer = (state = getInitialState().game, action) => {
   switch (action.type) {
     case PLACE_CHARACTER:
       return { ...state, board: placeACharacter(state.board, action.payload) };
     case REMOVE_CHARACTER:
       return { ...state, board: removeACharacter(state.board, action.payload) };
     case RESET_BOARD:
-      return getInitialState();
+      return getInitialState().game;
     case START_PLAY:
       return {
         ...state,
@@ -49,10 +106,25 @@ export const rootReducer = (state = getInitialState(), action) => {
       return { ...state, blueDead: blueIsDead(state.blueDead, action.payload) };
     case RED_DEAD:
       return { ...state, redDead: redIsDead(state.redDead, action.payload) };
+    case SHOW_POSSIBILITIES:
+      return { ...state, board: showThePossibilities(state.board, action.payload) };
+    case REMOVE_SELECTIONS:
+      return { ...state, board: removeTheSelections(state.board, action.payload) };
     default:
       return state;
   }
 };
+
+export const stateReducer = (state = getInitialState().gameState, action) => {
+  switch (action.type) {
+    case CHANGE_STATE:
+      return changeTheState(state.gameState, action.payload);
+    default:
+      return state;
+  }
+}
+
+export const rootReducer = combineReducers({ game: mainReducer, gameState: stateReducer});
 
 export function configureStore() {
   return createStore(rootReducer, getInitialState(), composeWithDevTools());

@@ -2,8 +2,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 export function DeadCharacters() {
-  const blueDeadEnemies = useSelector(state => state.blueDead);
-  const redDeadEnemies = useSelector(state => state.redDead);
+  const blueDeadEnemies = useSelector(state => state.game.blueDead);
+  const redDeadEnemies = useSelector(state => state.game.redDead);
 
   function calculateBackground(cell) {
     if (cell.placedNumber === 10) {

@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { DeadCharacters } from "./DeadCharacters";
 import { Board } from "./Board";
 import { useDispatch } from "react-redux";
-import { resetBoard } from "../state/actions";
+import { resetBoard, changeState } from "../state/actions";
 import { useSelector } from "react-redux";
 
-export function GamePage({ state, onChangeState }) {
+export function GamePage() {
   const dispatch = useDispatch();
   const activePlayer = useSelector(state => state.activePlayer);
+  const gameState = useSelector(state => state.gameState);
 
   return (
     <>
@@ -31,7 +32,7 @@ export function GamePage({ state, onChangeState }) {
               következik
             </div>
             <br />
-            <Board state={state} />
+            <Board state={gameState} />
           </div>
           <br />
           <div className="five wide middle aligned column">
@@ -42,7 +43,7 @@ export function GamePage({ state, onChangeState }) {
               id="vissza_fooldal"
               onClick={() => {
                 dispatch(resetBoard());
-                onChangeState((state = "MAIN_PAGE"));
+                dispatch(changeState('MAIN_PAGE'));
               }}
             >
               Vissza a főoldalra

@@ -1,11 +1,12 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { changeState } from "../state/actions";
 
 export function WaitingArea({
-  state,
-  onChangeState,
   room_number,
   setRoomNumber
 }) {
+  const dispatch = useDispatch();
   room_number = 100000 + Math.round(Math.random() * (999999 - 100000));
   return (
     <div
@@ -23,7 +24,7 @@ export function WaitingArea({
         className="ui red basic button"
         id="vissza"
         onClick={() => {
-          onChangeState((state = "MAIN_PAGE"));
+          dispatch(changeState('MAIN_PAGE'));
           setRoomNumber(room_number);
         }}
       >

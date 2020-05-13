@@ -7,13 +7,55 @@ import {
   nextPlayer,
   fightComes,
   blueDead,
-  redDead
+  redDead,
+  showPossibilities
 } from "../state/actions";
+
+export function atugorElemet(cell1, cell2, board) {
+  if (cell2.x !== cell1.x) {
+    if (cell2.x > cell1.x) {
+      let c = board[cell1.x + 1][cell1.y];
+      while (c.x !== cell2.x) {
+        if (c.placedNumber != null || c.isLake) {
+          return true;
+        }
+        c = board[c.x + 1][c.y];
+      }
+    } else {
+      let c = board[cell1.x - 1][cell1.y];
+      while (c.x !== cell2.x) {
+        if (c.placedNumber != null || c.isLake) {
+          return true;
+        }
+        c = board[c.x - 1][c.y];
+      }
+    }
+  } else {
+    if (cell2.y > cell1.y) {
+      let c = board[cell1.x][cell1.y + 1];
+      while (c.y !== cell2.y) {
+        if (c.placedNumber != null || c.isLake) {
+          return true;
+        }
+        c = board[c.x][c.y + 1];
+      }
+    } else {
+      let c = board[cell1.x][cell1.y - 1];
+      while (c.y !== cell2.y) {
+        if (c.placedNumber != null || c.isLake) {
+          return true;
+        }
+        c = board[c.x][c.y - 1];
+      }
+    }
+  }
+  return false;
+}
 
 export function Board({
   numbersNeeded,
   setNumbersNeeded,
-  state,
+  removeSelections,
   disableButton,
   wasFlag,
   setDisableButton,
@@ -22,8 +64,9 @@ export function Board({
   placedCharacterNumber,
   setPlacedCharacterNumber
 }) {
-  const board = useSelector(state => state.board);
-  const activePlayer = useSelector(state => state.activePlayer);
+  const gameState = useSelector(state => state.gameState);
+  const board = useSelector(state => state.game.board);
+  const activePlayer = useSelector(state => state.game.activePlayer);
   const dispatch = useDispatch();
   const [selectedForMoving, setSelectedForMoving] = useState(null);
   const [isGameOver, setIsGameOver] = useState(false);
@@ -55,53 +98,12 @@ export function Board({
     return true;
   }
 
-  if (nemMaradtLepo() && state === "IN_GAME" && !isGameOver) {
+  if (nemMaradtLepo() && gameState === "IN_GAME" && !isGameOver) {
     console.log("nem maradt lépő");
     setIsGameOver(true);
     let winner = activePlayer === "red" ? "kék" : "piros";
     setWinner(winner);
     // elérhetővé válik a vissza gomb
-  }
-
-  function atugorElemet(cell1, cell2) {
-    if (cell2.x !== cell1.x) {
-      if (cell2.x > cell1.x) {
-        let c = board[cell1.x + 1][cell1.y];
-        while (c.x !== cell2.x) {
-          if (c.placedNumber != null || c.isLake) {
-            return true;
-          }
-          c = board[c.x + 1][c.y];
-        }
-      } else {
-        let c = board[cell1.x - 1][cell1.y];
-        while (c.x !== cell2.x) {
-          if (c.placedNumber != null || c.isLake) {
-            return true;
-          }
-          c = board[c.x - 1][c.y];
-        }
-      }
-    } else {
-      if (cell2.y > cell1.y) {
-        let c = board[cell1.x][cell1.y + 1];
-        while (c.y !== cell2.y) {
-          if (c.placedNumber != null || c.isLake) {
-            return true;
-          }
-          c = board[c.x][c.y + 1];
-        }
-      } else {
-        let c = board[cell1.x][cell1.y - 1];
-        while (c.y !== cell2.y) {
-          if (c.placedNumber != null || c.isLake) {
-            return true;
-          }
-          c = board[c.x][c.y - 1];
-        }
-      }
-    }
-    return false;
   }
 
   // useEffect
@@ -211,11 +213,10 @@ export function Board({
       setPlacedCharacterNumber(
         (placedCharacterNumber = placedCharacterNumber + 1)
       );
-      // TODO: itt kell majd a gombot állítani
-      // if (placedCharacterNumber === 3) {
-      //   setDisableButton((disableButton = false));
-      // }
-    } else if (state === "PREPARE_GAME") {
+      if (placedCharacterNumber === 40) {
+        setDisableButton((disableButton = false));
+      }
+    } else if (gameState === "PREPARE_GAME") {
       console.log("levevés");
       setNumbersNeeded({
         ...numbersNeeded,
@@ -225,11 +226,11 @@ export function Board({
         (placedCharacterNumber = placedCharacterNumber - 1)
       );
       // TODO: gomb állítása!
-      // if (placedCharacterNumber < 3) {
-      //   setDisableButton((disableButton = true));
-      // }
+      if (placedCharacterNumber < 40) {
+        setDisableButton((disableButton = true));
+      }
       dispatch(removeCharacter(x, y));
-    } else if (state === "IN_GAME") {
+    } else if (gameState === "IN_GAME") {
       if (cell.color !== activePlayer && selectedForMoving == null) {
         return;
       }
@@ -241,6 +242,7 @@ export function Board({
       ) {
         // ki fog lépni
         setSelectedForMoving(cell);
+        dispatch(showPossibilities(cell));
       } else if (selectedForMoving == null) {
         return;
       } else {
@@ -254,6 +256,7 @@ export function Board({
         }
         if (cell.x === selectedForMoving.x && cell.y === selectedForMoving.y) {
           setSelectedForMoving(null);
+          dispatch(removeSelections());
           return;
         }
         if (
@@ -281,7 +284,7 @@ export function Board({
         // 2-es nem ugorhat át elemeket
         if (
           selectedForMoving.placedNumber === 2 &&
-          atugorElemet(selectedForMoving, cell)
+          atugorElemet(selectedForMoving, cell, board)
         ) {
           return;
         }
@@ -379,7 +382,9 @@ export function Board({
     let r = row.map((cell, index) => {
       return (
         <td
-          background={calculateBackground(cell)}
+          style={ gameState==='PREPARE_GAME' && cell.x>=6 ? {border: "2px solid brown", borderCollapse: "collapse", margin: 0, padding: 0} : 
+          gameState==='IN_GAME' && cell.border ? {backgroundColor: "#F0E68C"} : null}
+          background={cell.border? {backgroundColor: "#F0E68C"} : calculateBackground(cell)}
           key={index}
           onClick={handleTdClick}
         />
@@ -394,7 +399,7 @@ export function Board({
     >
       <table
         background="assets/plateau.png"
-        style={{ height: "572px", width: "572px" }}
+        style={{ height: "572px", width: "572px",  borderCollapse: "collapse" }}
       >
         <tbody>{rows}</tbody>
       </table>

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import classNames from "classnames";
+import { useDispatch } from 'react-redux';
+import { changeState } from "../state/actions";
 
-export function MainPage({ state, onChangeState, room_number }) {
+export function MainPage({ room_number }) {
+  const dispatch = useDispatch(); 
   const [errorHappened, setErrorHappened] = useState(false);
 
   function verifyConnection() {
@@ -9,7 +12,7 @@ export function MainPage({ state, onChangeState, room_number }) {
     let entered_number = parseInt(input.value);
     if (entered_number === room_number) {
       setErrorHappened(false);
-      onChangeState((state = "PREPARE_GAME"));
+      dispatch(changeState('PREPARE_GAME'));
     } else {
       setErrorHappened(true);
     }
@@ -72,7 +75,7 @@ export function MainPage({ state, onChangeState, room_number }) {
                 className="ui red basic button"
                 id="uj_jatek"
                 onClick={() =>
-                  onChangeState((state = "WAITING_FOR_SECOND_PLAYER"))
+                  dispatch(changeState('WAITING_FOR_SECOND_PLAYER'))
                 }
               >
                 Új játék indítása

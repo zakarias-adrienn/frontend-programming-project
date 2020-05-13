@@ -1,51 +1,4 @@
-let cells = [];
-let k = 1;
-for (let i = 0; i < 10; ++i) {
-  let row = [];
-  for (let j = 0; j < 10; ++j) {
-    let lake = false;
-    let cP = false;
-    if (
-      (i === 4 && j === 2) ||
-      (i === 4 && j === 3) ||
-      (i === 5 && j === 2) ||
-      (i === 5 && j === 3) ||
-      (i === 4 && j === 6) ||
-      (i === 4 && j === 7) ||
-      (i === 5 && j === 6) ||
-      (i === 5 && j === 7)
-    ) {
-      lake = true;
-    }
-    if (i >= 6) {
-      cP = true;
-    }
-    let cell = {
-      id: k,
-      x: i,
-      y: j,
-      isLake: lake,
-      canPlace: cP, // csak az alsó 4 sorba szabad
-      placedNumber: null,
-      color: null,
-      shown: false
-    };
-    row.push(cell);
-    if (row.length === 10) {
-      cells.push(row);
-      row = [];
-    }
-    k = k + 1;
-  }
-}
-
-export const getInitialState = () => ({
-  // state: 'MAIN_PAGE',
-  activePlayer: "red",
-  board: cells,
-  blueDead: [],
-  redDead: []
-});
+import { atugorElemet } from '../components/Board.js';
 
 export const PLACE_CHARACTER = "PLACE_CHARACTER";
 export const REMOVE_CHARACTER = "REMOVE_CHARACTER";
@@ -55,10 +8,28 @@ export const NEXT_PLAYER = "NEXT_PLAYER";
 export const FIGHT_COMES = "FIGHT_COMES";
 export const BLUE_DEAD = "BLUE_DEAD";
 export const RED_DEAD = "RED_DEAD";
+export const CHANGE_STATE = 'CHANGE_STATE';
+export const SHOW_POSSIBILITIES = 'SHOW_POSSIBILITIES';
+export const REMOVE_SELECTIONS = 'REMOVE_SELECTIONS';
 
 export const placeCharacter = (x, y, id) => ({
   type: PLACE_CHARACTER,
   payload: { x, y, id }
+});
+
+export const removeSelections = () => ({
+  type: REMOVE_SELECTIONS,
+  payload: null
+});
+
+export const changeState = (newState) => ({
+  type: CHANGE_STATE,
+  payload: newState
+});
+
+export const showPossibilities = (cell) => ({
+  type: SHOW_POSSIBILITIES,
+  payload: cell
 });
 
 export const nextPlayer = activePlayer => ({
@@ -96,6 +67,11 @@ export const move = (cell1, cell2) => ({
   payload: { cell1, cell2 }
 });
 
+export function changeTheState(gameState, newState){
+  console.log(newState);
+  return newState;
+}
+
 export function blueIsDead(blueDead, cell) {
   return [...blueDead, cell];
 }
@@ -112,6 +88,103 @@ export function nextPlayerComes(board, activePlayer) {
     newPlayer = "red";
   }
   return newPlayer;
+}
+
+export function removeTheSelections(board, payload) {
+  let newBoard = [];
+    let cell = null;
+    for (let i = 0; i < board.length; ++i) {
+      let r = board[i];
+      let new_row = [];
+      for (let j = 0; j < r.length; ++j) {
+        cell =  {
+          id: board[i][j].id,
+          x: board[i][j].x,
+          y: board[i][j].y,
+          isLake: board[i][j].isLake,
+          canPlace: board[i][j].canPlace,
+          placedNumber: board[i][j].placedNumber,
+          color: board[i][j].color,
+          border: false
+        };
+        new_row.push(cell);
+        if (new_row.length === 10) {
+          newBoard.push(new_row);
+        }
+      }
+    } 
+    return newBoard;
+}
+
+export function showThePossibilities(board, c) {
+  console.log("borderek állítása - hova léphet");
+  if(c.placedNumber!==2){
+    let newBoard = [];
+    let cell = null;
+    for (let i = 0; i < board.length; ++i) {
+      let r = board[i];
+      let new_row = [];
+      for (let j = 0; j < r.length; ++j) {
+        if ((board[i][j].x === c.x-1 && board[i][j].y === c.y && board[i][j].color!==c.color && board[i][j].isLake===false) || 
+        (board[i][j].x === c.x && board[i][j].y === c.y-1 && board[i][j].color!==c.color && board[i][j].isLake===false) || 
+        (board[i][j].x === c.x+1 && board[i][j].y === c.y && board[i][j].color!==c.color && board[i][j].isLake===false) || 
+        (board[i][j].x === c.x && board[i][j].y === c.y+1 && board[i][j].color!==c.color && board[i][j].isLake===false)) {
+          cell = {
+            id: board[i][j].id,
+            x: board[i][j].x,
+            y: board[i][j].y,
+            isLake: board[i][j].isLake,
+            canPlace: board[i][j].canPlace,
+            placedNumber: board[i][j].placedNumber,
+            color: board[i][j].color,
+            border: true
+          };
+        } else {
+          cell = board[i][j];
+        }
+        new_row.push(cell);
+        if (new_row.length === 10) {
+          newBoard.push(new_row);
+        }
+      }
+    } 
+    return newBoard;
+  }
+  else if(c.placedNumber===2){
+    let newBoard = [];
+    let cell = null;
+    for (let i = 0; i < board.length; ++i) {
+      let r = board[i];
+      let new_row = [];
+      for (let j = 0; j < r.length; ++j) {
+        if ((board[i][j].x === c.x && board[i][j].y!==c.y && board[i][j].color!==c.color && board[i][j].isLake===false && !atugorElemet(c, board[i][j], board)) 
+        || 
+        (board[i][j].x !== c.x && board[i][j].y === c.y && board[i][j].color!==c.color && board[i][j].isLake===false && !atugorElemet(c, board[i][j], board))) {
+            cell = {
+              id: board[i][j].id,
+              x: board[i][j].x,
+              y: board[i][j].y,
+              isLake: board[i][j].isLake,
+              canPlace: board[i][j].canPlace,
+              placedNumber: board[i][j].placedNumber,
+              color: board[i][j].color,
+              border: true
+            };
+        } else {
+          cell = board[i][j];
+        }
+        new_row.push(cell);
+        if (new_row.length === 10) {
+          newBoard.push(new_row);
+        }
+      }
+    }
+    return newBoard;
+  }
+  else {
+    return board;
+  }
+
 }
 
 export function afterFight(board, { cell1, cell2 }) {
@@ -142,7 +215,7 @@ export function afterFight(board, { cell1, cell2 }) {
           canPlace: true, //?
           placedNumber: null,
           color: null,
-          shown: false //?
+          border: false
         };
       } else if (board[i][j].x === cell2.x && board[i][j].y === cell2.y) {
         if (stronger == null) {
@@ -154,7 +227,7 @@ export function afterFight(board, { cell1, cell2 }) {
             canPlace: true, //?
             placedNumber: null,
             color: null,
-            shown: false //?
+            border: false
           };
         } else {
           cell = {
@@ -165,11 +238,20 @@ export function afterFight(board, { cell1, cell2 }) {
             canPlace: true, //?
             placedNumber: stronger.placedNumber,
             color: stronger.color,
-            shown: false //?
+            border: false
           };
         }
       } else {
-        cell = board[i][j];
+        cell = {
+          id: board[i][j].id,
+          x:  board[i][j].x,
+          y:  board[i][j].y,
+          isLake:  board[i][j].isLake,
+          canPlace:  board[i][j].canPlace,
+          placedNumber:  board[i][j].placedNumber,
+          color: board[i][j].color,
+          border: false
+        };
       }
       new_row.push(cell);
       if (new_row.length === 10) {
@@ -196,7 +278,7 @@ export function afterMove(board, { cell1, cell2 }) {
           canPlace: true, //?
           placedNumber: null,
           color: null,
-          shown: false //?
+          border: false
         };
       } else if (board[i][j].x === cell2.x && board[i][j].y === cell2.y) {
         cell = {
@@ -207,10 +289,19 @@ export function afterMove(board, { cell1, cell2 }) {
           canPlace: true, //?
           placedNumber: cell1.placedNumber,
           color: cell1.color,
-          shown: false //?
+          border: false
         };
       } else {
-        cell = board[i][j];
+        cell = {
+          id: board[i][j].id,
+          x: board[i][j].x,
+          y: board[i][j].y,
+          isLake: board[i][j].isLake,
+          canPlace:  board[i][j].canPlace,
+          placedNumber:  board[i][j].placedNumber,
+          color:  board[i][j].color,
+          border: false
+        };
       }
       new_row.push(cell);
       if (new_row.length === 10) {
@@ -218,6 +309,7 @@ export function afterMove(board, { cell1, cell2 }) {
       }
     }
   }
+  console.log(newBoard);
   return newBoard;
 }
 
@@ -237,7 +329,7 @@ export function startAPLay(board) {
           canPlace: true, //?
           placedNumber: -1 + Math.round(Math.random() * (10 - -1)),
           color: "blue",
-          shown: false //?
+          border: false
         };
       } else {
         cell = board[i][j];
@@ -275,7 +367,7 @@ export function placeACharacter(board, { x, y, id }) {
     canPlace: true,
     placedNumber: parseInt(id),
     color: "red",
-    shown: false
+    border: false
   };
   let newBoard = board.map(row => {
     let r = row.map(cell => {
@@ -311,7 +403,7 @@ export function removeACharacter(board, { x, y }) {
     canPlace: true,
     placedNumber: null,
     color: null,
-    shown: false
+    border: false
   };
   let newBoard = board.map(row => {
     let r = row.map(cell => {

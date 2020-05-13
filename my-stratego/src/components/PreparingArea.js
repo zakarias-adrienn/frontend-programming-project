@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Characters } from "./Characters";
 import { Board } from "./Board";
-import { useDispatch } from "react-redux";
-import { startPlay } from "../state/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { startPlay, changeState } from "../state/actions";
 
-export function PreparingArea({ state, onChangeState }) {
+export function PreparingArea() {
+  const gameState = useSelector(state => state.gameState);
   const [chosenCharacter, setChosenCharacter] = useState(null);
   const [placedCharacterNumber, setPlacedCharacterNumber] = useState(0);
-  const [disableButton, setDisableButton] = useState(false);
+  const [disableButton, setDisableButton] = useState(true);
   const dispatch = useDispatch();
   let initialNumbers = {
     "-1": 1,
@@ -37,7 +38,7 @@ export function PreparingArea({ state, onChangeState }) {
             <Board
               numbersNeeded={numbersNeeded}
               setNumbersNeeded={setNumbersNeeded}
-              state={state}
+              state={gameState}
               disableButton={disableButton}
               setDisableButton={setDisableButton}
               chosenOne={chosenCharacter}
@@ -62,7 +63,7 @@ export function PreparingArea({ state, onChangeState }) {
               className="ui red basic button"
               id="kesz"
               onClick={() => {
-                onChangeState((state = "IN_GAME"));
+                dispatch(changeState('IN_GAME'));
                 dispatch(startPlay());
               }}
             >
