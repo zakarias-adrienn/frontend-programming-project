@@ -14,14 +14,26 @@ export const REMOVE_SELECTIONS = 'REMOVE_SELECTIONS';
 export const SET_CURRENT_PLAYER = 'SET_CURRENT_PLAYER';
 export const SET_ROOM_NUMBER = 'SET_ROOM_NUMBER';
 export const SET_READY = 'SET_READY';
+export const SET_READY2 = 'SET_READY2';
+export const BOTH_READY = 'BOTH_READY';
 
 export const setRoomNumber = (number) => ({
   type: SET_ROOM_NUMBER,
   payload: number
 });
 
+export const bothReady = () => ({
+  type: BOTH_READY,
+  payload: null
+});
+
 export const setReady = (ready) => ({
   type: SET_READY,
+  payload: ready
+});
+
+export const setReady2 = (ready) => ({
+  type: SET_READY2,
   payload: ready
 });
 
@@ -96,25 +108,25 @@ export function changeTheState(gameState, newState){
 }
 
 export function blueIsDead(blueDead, cell) {
+  if (blueDead.includes(cell)){
+    return blueDead;
+  }
   return [...blueDead, cell];
 }
 
 export function redIsDead(redDead, cell) {
+  if (redDead.includes(cell)){
+    return redDead;
+  }
   return [...redDead, cell];
 }
 
 export function nextPlayerComes(player, activePlayer) {
-  let newPlayer = null;
-  if (player === "red") {
-    newPlayer = "blue";
-  } else {
-    newPlayer = "red";
-  }
-  return newPlayer;
+  return activePlayer;
 }
 
 export function setTheReady(first, ready){
-  return first+ready;
+  return ready;
 }
 
 
@@ -346,33 +358,7 @@ export function afterMove(board, { cell1, cell2 }) {
 }
 
 export function startAPLay(board) {
-  let newBoard = [];
-  for (let i = 0; i < 10; ++i) {
-    let row = [];
-    for (let j = 0; j < 10; ++j) {
-      // feltöltöm tetszőlegesen kékkel
-      let cell = null;
-      if (i <= 3) {
-        cell = {
-          id: board[i][j].id,
-          x: i,
-          y: j,
-          isLake: false,
-          canPlace: true, //?
-          placedNumber: -1 + Math.round(Math.random() * (10 - -1)),
-          color: "blue",
-          border: false
-        };
-      } else {
-        cell = board[i][j];
-      }
-      row.push(cell);
-      if (row.length === 10) {
-        newBoard.push(row);
-      }
-    }
-  }
-  return newBoard;
+  return board;
 }
 
 export function placeACharacter(board, { x, y, id, color }) {
@@ -408,7 +394,6 @@ export function placeACharacter(board, { x, y, id, color }) {
     });
     return r;
   });
-  console.log(alteredCell);
   return newBoard;
 }
 

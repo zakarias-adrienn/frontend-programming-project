@@ -2,17 +2,18 @@ import React, { useState } from "react";
 import { Characters } from "./Characters";
 import { Board } from "./Board";
 import { useDispatch, useSelector } from "react-redux";
-import { startPlay, changeState, setReady, setTheReady } from "../state/actions";
+import { startPlay, changeState, setReady, setReady2, BOTH_READY, bothReady } from "../state/actions";
 import socket from '../socket.js';
 
 export function PreparingArea() {
   const gameState = useSelector(state => state.gameState);
-  const board = useSelector(state => state.game.board);
+  const currentPlayer = useSelector(state => state.game.currentPlayer);
   const room_number = useSelector(state => state.game.room_number);
   const ready = useSelector(state => state.game.ready);
+  const ready2 = useSelector(state => state.game.ready2);
   const [chosenCharacter, setChosenCharacter] = useState(null);
   const [placedCharacterNumber, setPlacedCharacterNumber] = useState(0);
-  const [disableButton, setDisableButton] = useState(true);
+  const [disableButton, setDisableButton] = useState(false);
   const dispatch = useDispatch();
   let initialNumbers = {
     "-1": 1,
@@ -31,9 +32,11 @@ export function PreparingArea() {
   const [numbersNeeded, setNumbersNeeded] = useState(initialNumbers);
 
   socket.on('action-sent', function(answer){
-    dispatch(answer.action);
-    if(ready===4){
-      console.log("Kezdődiiiiiiiiiik");
+    console.log(answer);
+    if(answer.action.type!==BOTH_READY){
+      dispatch(answer.action);
+    }
+    if(answer.action.type===BOTH_READY){
       dispatch(changeState('IN_GAME'));
       dispatch(startPlay());
     }
@@ -77,9 +80,31 @@ export function PreparingArea() {
               className="ui red basic button"
               id="kesz"
               onClick={() => {
-                socket.emit('sync-action', room_number, setReady(1), false, function(answer){
-                  console.log(answer);
-                });
+                console.log("------------------------------");
+                if(currentPlayer==='red'){
+                  console.log("piros");
+                  dispatch(setReady(true));
+                  if(ready2){
+                    socket.emit('sync-action', room_number, bothReady(), false, function(answer){
+                      console.log(answer);
+                    });
+                  } else {
+                    socket.emit('sync-action', room_number, setReady(true), false, function(answer){
+                      console.log(answer);
+                    });
+                  }
+                } else {
+                  dispatch(setReady2(true));
+                  if(ready){
+                    socket.emit('sync-action', room_number, bothReady(), false, function(answer){
+                      console.log(answer);
+                    });
+                  } else {
+                    socket.emit('sync-action', room_number, setReady2(true), false, function(answer){
+                      console.log(answer);
+                    });
+                  }
+                }
               }}
             >
               Kész, kezdődhet a játék

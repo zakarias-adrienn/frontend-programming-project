@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 export function DeadCharacters() {
   const blueDeadEnemies = useSelector(state => state.game.blueDead);
   const redDeadEnemies = useSelector(state => state.game.redDead);
+  const currentPlayer = useSelector(state => state.game.currentPlayer);
 
   function calculateBackground(cell) {
     if (cell.placedNumber === 10) {
@@ -83,21 +84,28 @@ export function DeadCharacters() {
     return ps;
   }
 
-  return (
-    <>
-      <div style={{ fontSize: "30px" }}>
-        <span style={{ color: "blue" }}>Kék</span> levett bábúi:
-        <br />
-        <br />
-        {getBlueList()}
-      </div>
-      <br />
-      <div style={{ fontSize: "30px" }}>
-        <span style={{ color: "red" }}>Piros</span> levett bábúi:
-        <br />
-        <br />
-        {getRedList()}
-      </div>
-    </>
-  );
+  
+  if(currentPlayer==='red'){
+      return (
+        <> 
+            <div style={{ fontSize: "30px" }}>
+              <span style={{ color: "blue" }}>Kék</span> levett bábúi:
+              <br />
+              <br />
+              {getBlueList()}
+            </div>
+        </>
+      );
+    }
+    else 
+      return (
+        <>
+        <div style={{ fontSize: "30px" }}>
+          <span style={{ color: "red" }}>Piros</span> levett bábúi:
+          <br />
+          <br />
+          {getRedList()}
+        </div>
+        </>
+    );
 }

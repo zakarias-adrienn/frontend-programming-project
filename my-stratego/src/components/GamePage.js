@@ -4,11 +4,18 @@ import { Board } from "./Board";
 import { useDispatch } from "react-redux";
 import { resetBoard, changeState } from "../state/actions";
 import { useSelector } from "react-redux";
+import socket from "../socket";
 
 export function GamePage() {
   const dispatch = useDispatch();
   const activePlayer = useSelector(state => state.game.activePlayer);
   const gameState = useSelector(state => state.gameState);
+
+  socket.on('player-left', function(answer){
+    console.log(answer);
+    dispatch(resetBoard());
+    dispatch(changeState('MAIN_PAGE'));
+  });
 
   return (
     <>
@@ -42,6 +49,9 @@ export function GamePage() {
               className="ui red basic button"
               id="vissza_fooldal"
               onClick={() => {
+                socket.emit('leave-room', function(answer){
+                  console.log(answer);
+                });
                 dispatch(resetBoard());
                 dispatch(changeState('MAIN_PAGE'));
               }}

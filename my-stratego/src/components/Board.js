@@ -11,6 +11,7 @@ import {
   showPossibilities,
   removeSelections
 } from "../state/actions";
+import socket from '../socket.js';
 
 export function atugorElemet(cell1, cell2, board) {
   if (cell2.x !== cell1.x) {
@@ -61,8 +62,7 @@ export function Board({
   chosenOne,
   setChosenOne,
   placedCharacterNumber,
-  setPlacedCharacterNumber,
-  socket
+  setPlacedCharacterNumber
 }) {
   const gameState = useSelector(state => state.gameState);
   const board = useSelector(state => state.game.board);
@@ -91,7 +91,7 @@ export function Board({
           board[i][j].placedNumber !== -1 &&
           board[i][j].placedNumber !== 0
         ) {
-          console.log(board[i][j]);
+          // console.log(board[i][j]);
           return false;
         }
       }
@@ -120,13 +120,81 @@ export function Board({
 
   function calculateBackground(cell) {
     if (cell.placedNumber != null) {
-      // if (cell.color !== activePlayer) {
-      //   if (cell.color === "blue") {
-      //     return "assets/Blue.jpg";
-      //   } else {
-      //     return "assets/Red.jpg";
-      //   }
-      // }
+      if (cell.placedNumber === 10) {
+        if (cell.color === "blue") {
+          return "assets/pieces-1-B.jpg";
+        }
+        return "assets/pieces-1-R.jpg";
+      } else if (cell.placedNumber === 2) {
+        if (cell.color === "blue") {
+          return "assets/pieces-2-B.jpg";
+        }
+        return "assets/pieces-2-R.jpg";
+      } else if (cell.placedNumber === 3) {
+        if (cell.color === "blue") {
+          return "assets/pieces-3-B.jpg";
+        }
+        return "assets/pieces-3-R.jpg";
+      } else if (cell.placedNumber === 4) {
+        if (cell.color === "blue") {
+          return "assets/pieces-4-B.jpg";
+        }
+        return "assets/pieces-4-R.jpg";
+      } else if (cell.placedNumber === 5) {
+        if (cell.color === "blue") {
+          return "assets/pieces-5-B.jpg";
+        }
+        return "assets/pieces-5-R.jpg";
+      } else if (cell.placedNumber === 6) {
+        if (cell.color === "blue") {
+          return "assets/pieces-6-B.jpg";
+        }
+        return "assets/pieces-6-R.jpg";
+      } else if (cell.placedNumber === 7) {
+        if (cell.color === "blue") {
+          return "assets/pieces-7-B.jpg";
+        }
+        return "assets/pieces-7-R.jpg";
+      } else if (cell.placedNumber === 8) {
+        if (cell.color === "blue") {
+          return "assets/pieces-8-B.jpg";
+        }
+        return "assets/pieces-8-R.jpg";
+      } else if (cell.placedNumber === 9) {
+        if (cell.color === "blue") {
+          return "assets/pieces-9-B.jpg";
+        }
+        return "assets/pieces-9-R.jpg";
+      } else if (cell.placedNumber === -1) {
+        if (cell.color === "blue") {
+          return "assets/pieces-F-B.jpg";
+        }
+        return "assets/pieces-F-R.jpg";
+      } else if (cell.placedNumber === 1) {
+        if (cell.color === "blue") {
+          return "assets/pieces-S-B.jpg";
+        }
+        return "assets/pieces-S-R.jpg";
+      } else if (cell.placedNumber === 0) {
+        if (cell.color === "blue") {
+          return "assets/pieces-B-B.jpg";
+        }
+        return "assets/pieces-B-R.jpg";
+      }
+    } else {
+      return null;
+    }
+  }
+
+  function calculateBackground2(cell) {
+    if (cell.placedNumber != null) {
+      if (cell.color !== currentPlayer) {
+        if (cell.color === "blue") {
+          return "assets/Blue.jpg";
+        } else {
+          return "assets/Red.jpg";
+        }
+      }
       if (cell.placedNumber === 10) {
         if (cell.color === "blue") {
           return "assets/pieces-1-B.jpg";
@@ -246,6 +314,9 @@ export function Board({
       if (cell.color !== activePlayer && selectedForMoving == null) {
         return;
       }
+      if(currentPlayer!==activePlayer){
+        return;
+      }
       if (
         cell.placedNumber != null &&
         cell.placedNumber !== 0 &&
@@ -355,8 +426,20 @@ export function Board({
           // de lesz olyan hogy mindkettőt le kell venni, akkor egy nullos placedNumbert kell megadjak
           setTimeout(() => {
             dispatch(fightComes(selectedForMoving, cell));
+            socket.emit('sync-action', room_number, fightComes(selectedForMoving, cell), true, function(answer){
+              console.log(answer);
+            });
             setSelectedForMoving(null);
-            dispatch(nextPlayer(activePlayer));
+            let next;
+            if(activePlayer==='red'){
+              next = 'blue';
+            } else {
+              next = 'red';
+            }
+            dispatch(nextPlayer(next));
+            socket.emit('sync-action', room_number, nextPlayer(next), true, function(answer){
+              console.log(answer);
+            });
             harc = false;
             setJelenit(false);
             // kell szólni hogy levevődött egy bábu vagy kettő
@@ -364,16 +447,34 @@ export function Board({
               // mindkettő meghal
               if (activePlayer === "red") {
                 dispatch(blueDead(cell));
+                socket.emit('sync-action', room_number, blueDead(cell), true, function(answer){
+                  console.log(answer);
+                });
                 dispatch(redDead(selectedForMoving));
+                socket.emit('sync-action', room_number, redDead(selectedForMoving), true, function(answer){
+                  console.log(answer);
+                });
               } else {
                 dispatch(blueDead(selectedForMoving));
+                socket.emit('sync-action', room_number, blueDead(selectedForMoving), true, function(answer){
+                  console.log(answer);
+                });
                 dispatch(redDead(cell));
+                socket.emit('sync-action', room_number, redDead(cell), true, function(answer){
+                  console.log(answer);
+                });
               }
             } else {
               if (stronger.color === "red") {
                 dispatch(blueDead(weaker));
+                socket.emit('sync-action', room_number, blueDead(weaker), true, function(answer){
+                  console.log(answer);
+                });
               } else {
                 dispatch(redDead(weaker));
+                socket.emit('sync-action', room_number, redDead(weaker), true, function(answer){
+                  console.log(answer);
+                });
               }
             }
           }, 3000);
@@ -383,8 +484,20 @@ export function Board({
           // meg kell őket jeleníteni
         } else {
           dispatch(move(selectedForMoving, cell));
+          socket.emit('sync-action', room_number, move(selectedForMoving, cell), true, function(answer){
+            console.log(answer);
+          });
           setSelectedForMoving(null);
-          dispatch(nextPlayer(activePlayer));
+          let next;
+          if(activePlayer==='red'){
+            next = 'blue';
+          } else {
+            next = 'red';
+          }
+          dispatch(nextPlayer(next));
+          socket.emit('sync-action', room_number, nextPlayer(next), true, function(answer){
+            console.log(answer);
+          });
         }
       }
     }
@@ -398,7 +511,7 @@ export function Board({
           { gameState==='PREPARE_GAME' && currentPlayer==='red' &&  cell.x>=6 ? {border: "2px solid brown", borderCollapse: "collapse", margin: 0, padding: 0} : 
             gameState==='PREPARE_GAME' && currentPlayer==='blue' && cell.x<=3 ?  {border: "2px solid brown", borderCollapse: "collapse", margin: 0, padding: 0} :
           gameState==='IN_GAME' && cell.border ? {backgroundColor: "#F0E68C"} : null}
-          background={cell.border ? {backgroundColor: "#F0E68C"} : cell.color===currentPlayer ? calculateBackground(cell): null }
+          background={cell.border ? {backgroundColor: "#F0E68C"} : cell.color===currentPlayer && gameState==='PREPARE_GAME' ? calculateBackground(cell) : gameState==='IN_GAME' ? calculateBackground2(cell) : null }
           key={index}
           onClick={handleTdClick}
         />
