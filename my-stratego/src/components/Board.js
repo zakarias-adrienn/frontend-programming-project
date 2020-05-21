@@ -57,8 +57,6 @@ export function atugorElemet(cell1, cell2, board) {
 export function Board({
   numbersNeeded,
   setNumbersNeeded,
-  setDisableButton,
-  disableButton,
   chosenOne,
   setChosenOne,
   placedCharacterNumber,
@@ -289,24 +287,19 @@ export function Board({
       setPlacedCharacterNumber(
         (placedCharacterNumber = placedCharacterNumber + 1)
       );
-      if (placedCharacterNumber === 40) {
-        setDisableButton((disableButton = false));
-      }
     } else if (gameState === "PREPARE_GAME") {
       console.log("levevés");
       setNumbersNeeded({
         ...numbersNeeded,
         ["" + cell.placedNumber]: numbersNeeded["" + cell.placedNumber] + 1
       });
+      console.log("levett");
+      console.log(placedCharacterNumber);
+      setChosenOne((chosenOne = null));
+      dispatch(removeCharacter(x, y));
       setPlacedCharacterNumber(
         (placedCharacterNumber = placedCharacterNumber - 1)
       );
-      setChosenOne((chosenOne = null));
-      // TODO: gomb állítása!
-      if (placedCharacterNumber < 40) {
-        setDisableButton((disableButton = true));
-      }
-      dispatch(removeCharacter(x, y));
       socket.emit('sync-action', room_number, removeCharacter(x, y), true, function(answer){
         console.log(answer);
       });

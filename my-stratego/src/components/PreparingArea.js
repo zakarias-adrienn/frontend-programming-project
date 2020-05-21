@@ -13,7 +13,18 @@ export function PreparingArea() {
   const ready2 = useSelector(state => state.game.ready2);
   const [chosenCharacter, setChosenCharacter] = useState(null);
   const [placedCharacterNumber, setPlacedCharacterNumber] = useState(0);
-  const [disableButton, setDisableButton] = useState(true);
+  const disableButton = useSelector(state => {
+    let count = 0;
+    for (let i = 0; i < state.game.board.length; ++i) {
+      let r = state.game.board[i];
+      for (let j = 0; j < r.length; ++j) {
+        if(state.game.board[i][j].color===currentPlayer){
+          count=count+1;
+        }
+      }
+    }
+    return count!==40; 
+  });
   const dispatch = useDispatch();
   let initialNumbers = {
     "-1": 1,
@@ -57,7 +68,6 @@ export function PreparingArea() {
               setNumbersNeeded={setNumbersNeeded}
               state={gameState}
               disableButton={disableButton}
-              setDisableButton={setDisableButton}
               chosenOne={chosenCharacter}
               setChosenOne={setChosenCharacter}
               placedCharacterNumber={placedCharacterNumber}
