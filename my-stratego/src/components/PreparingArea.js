@@ -13,7 +13,7 @@ export function PreparingArea() {
   const ready2 = useSelector(state => state.game.ready2);
   const [chosenCharacter, setChosenCharacter] = useState(null);
   const [placedCharacterNumber, setPlacedCharacterNumber] = useState(0);
-  const [disableButton, setDisableButton] = useState(false);
+  const [disableButton, setDisableButton] = useState(true);
   const dispatch = useDispatch();
   let initialNumbers = {
     "-1": 1,
