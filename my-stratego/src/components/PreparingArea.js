@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { Characters } from "./Characters";
 import { Board } from "./Board";
 import { useDispatch, useSelector } from "react-redux";
-import { startPlay, changeState } from "../state/actions";
+import { startPlay, changeState, setReady, setTheReady } from "../state/actions";
+import socket from '../socket.js';
 
-export function PreparingArea({ socket}) {
+export function PreparingArea() {
   const gameState = useSelector(state => state.gameState);
   const board = useSelector(state => state.game.board);
   const room_number = useSelector(state => state.game.room_number);
+  const ready = useSelector(state => state.game.ready);
   const [chosenCharacter, setChosenCharacter] = useState(null);
   const [placedCharacterNumber, setPlacedCharacterNumber] = useState(0);
   const [disableButton, setDisableButton] = useState(true);
@@ -28,7 +30,14 @@ export function PreparingArea({ socket}) {
   };
   const [numbersNeeded, setNumbersNeeded] = useState(initialNumbers);
 
- 
+  socket.on('action-sent', function(answer){
+    dispatch(answer.action);
+    if(ready===4){
+      console.log("Kezdődiiiiiiiiiik");
+      dispatch(changeState('IN_GAME'));
+      dispatch(startPlay());
+    }
+  });
 
   return (
     <>
@@ -68,11 +77,9 @@ export function PreparingArea({ socket}) {
               className="ui red basic button"
               id="kesz"
               onClick={() => {
-                // socket.emit('sync-state', room_number, board, true, function(answer){
-                //   console.log(answer);
-                // });
-                // dispatch(changeState('IN_GAME'));
-                // dispatch(startPlay());
+                socket.emit('sync-action', room_number, setReady(1), false, function(answer){
+                  console.log(answer);
+                });
               }}
             >
               Kész, kezdődhet a játék

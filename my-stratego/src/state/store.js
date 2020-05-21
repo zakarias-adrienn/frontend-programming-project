@@ -28,7 +28,9 @@ import {
   SET_CURRENT_PLAYER,
   setTheCurrentPlayer,
   SET_ROOM_NUMBER,
-  setTheRoomNumber
+  setTheRoomNumber,
+  SET_READY,
+  setTheReady
 } from "./actions";
 
 let cells = [];
@@ -71,6 +73,7 @@ for (let i = 0; i < 10; ++i) {
 export const getInitialState = () => ({
   gameState: 'MAIN_PAGE',
   game: {
+    ready: 0,
     room_number: null,
     currentPlayer: null,
     activePlayer: "red",
@@ -116,6 +119,8 @@ export const mainReducer = (state = getInitialState().game, action) => {
       return { ...state, currentPlayer: setTheCurrentPlayer(state.currentPlayer, action.payload)};
     case SET_ROOM_NUMBER:
       return { ...state, room_number: setTheRoomNumber(state.room_number, action.payload)};
+    case SET_READY:
+      return { ...state, ready: setTheReady(state.ready, action.payload)};
     default:
       return state;
   }

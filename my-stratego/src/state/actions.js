@@ -13,11 +13,18 @@ export const SHOW_POSSIBILITIES = 'SHOW_POSSIBILITIES';
 export const REMOVE_SELECTIONS = 'REMOVE_SELECTIONS';
 export const SET_CURRENT_PLAYER = 'SET_CURRENT_PLAYER';
 export const SET_ROOM_NUMBER = 'SET_ROOM_NUMBER';
+export const SET_READY = 'SET_READY';
 
 export const setRoomNumber = (number) => ({
   type: SET_ROOM_NUMBER,
   payload: number
 });
+
+export const setReady = (ready) => ({
+  type: SET_READY,
+  payload: ready
+});
+
 
 export const placeCharacter = (x, y, id, color) => ({
   type: PLACE_CHARACTER,
@@ -105,6 +112,11 @@ export function nextPlayerComes(player, activePlayer) {
   }
   return newPlayer;
 }
+
+export function setTheReady(first, ready){
+  return first+ready;
+}
+
 
 export function removeTheSelections(board, payload) {
   let newBoard = [];

@@ -2,8 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeState } from "../state/actions";
 
-export function WaitingArea({
-}) {
+export function WaitingArea() {
   const dispatch = useDispatch();
   const room_number = useSelector(state => state.game.room_number);
   return (

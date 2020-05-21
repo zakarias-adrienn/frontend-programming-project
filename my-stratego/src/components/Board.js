@@ -78,7 +78,6 @@ export function Board({
   const [winner, setWinner] = useState(null);
   const currentPlayer = useSelector(state => state.game.currentPlayer);
   const room_number = useSelector(state => state.game.room_number);
-  const game = useSelector(state => state.game);
 
   // valahol fel kellene használni
   // az új board nem elérhető csak következő rerenderkor ezért nem tudom ezt vizsgálni :(
@@ -234,11 +233,15 @@ export function Board({
       setPlacedCharacterNumber(
         (placedCharacterNumber = placedCharacterNumber - 1)
       );
+      setChosenOne((chosenOne = null));
       // TODO: gomb állítása!
       if (placedCharacterNumber < 40) {
         setDisableButton((disableButton = true));
       }
       dispatch(removeCharacter(x, y));
+      socket.emit('sync-action', room_number, removeCharacter(x, y), true, function(answer){
+        console.log(answer);
+      });
     } else if (gameState === "IN_GAME") {
       if (cell.color !== activePlayer && selectedForMoving == null) {
         return;
@@ -395,7 +398,7 @@ export function Board({
           { gameState==='PREPARE_GAME' && currentPlayer==='red' &&  cell.x>=6 ? {border: "2px solid brown", borderCollapse: "collapse", margin: 0, padding: 0} : 
             gameState==='PREPARE_GAME' && currentPlayer==='blue' && cell.x<=3 ?  {border: "2px solid brown", borderCollapse: "collapse", margin: 0, padding: 0} :
           gameState==='IN_GAME' && cell.border ? {backgroundColor: "#F0E68C"} : null}
-          background={cell.border ? {backgroundColor: "#F0E68C"} : calculateBackground(cell)}
+          background={cell.border ? {backgroundColor: "#F0E68C"} : cell.color===currentPlayer ? calculateBackground(cell): null }
           key={index}
           onClick={handleTdClick}
         />

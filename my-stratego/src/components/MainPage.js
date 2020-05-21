@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import classNames from "classnames";
 import { useDispatch } from 'react-redux';
 import { changeState, setCurrentPlayer, setRoomNumber } from "../state/actions";
+import socket from '../socket.js';
 
-export function MainPage({ socket }) {
+export function MainPage() {
   const dispatch = useDispatch(); 
   const [errorHappened, setErrorHappened] = useState(false);
   let roomNumber = null;
@@ -11,14 +12,16 @@ export function MainPage({ socket }) {
   function verifyConnection() {
     const input = document.querySelector("#csatlakozas");
     let entered_number = input.value;
-      socket.emit('join-room', entered_number, function(answer){
-        console.log(answer);
-        if(answer.status==='ok'){
-          setErrorHappened(false);
-        } else {
-          setErrorHappened(true);
-        } 
-      });   
+    console.log(entered_number);
+    socket.emit('join-room', entered_number, function(answer){
+      console.log(answer);
+      if(answer.status==='ok'){
+        setErrorHappened(false);
+        dispatch(setRoomNumber(entered_number));
+      } else {
+        setErrorHappened(true);
+      } 
+    });   
   }
 
   socket.on('player-joined', function(answer){
@@ -34,9 +37,6 @@ export function MainPage({ socket }) {
     }
     dispatch(setCurrentPlayer(color));
     dispatch(changeState('PREPARE_GAME'));
-  });
-  socket.on('action-sent', function(answer){
-    dispatch(answer.action);
   });
 
   return (
