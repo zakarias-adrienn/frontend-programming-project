@@ -4,8 +4,10 @@ import { Board } from "./Board";
 import { useDispatch, useSelector } from "react-redux";
 import { startPlay, changeState } from "../state/actions";
 
-export function PreparingArea() {
+export function PreparingArea({ socket}) {
   const gameState = useSelector(state => state.gameState);
+  const board = useSelector(state => state.game.board);
+  const room_number = useSelector(state => state.game.room_number);
   const [chosenCharacter, setChosenCharacter] = useState(null);
   const [placedCharacterNumber, setPlacedCharacterNumber] = useState(0);
   const [disableButton, setDisableButton] = useState(true);
@@ -26,6 +28,8 @@ export function PreparingArea() {
   };
   const [numbersNeeded, setNumbersNeeded] = useState(initialNumbers);
 
+ 
+
   return (
     <>
       <div
@@ -36,6 +40,7 @@ export function PreparingArea() {
         <div className="ui grid">
           <div className="ten wide middle aligned column">
             <Board
+              socket={socket}
               numbersNeeded={numbersNeeded}
               setNumbersNeeded={setNumbersNeeded}
               state={gameState}
@@ -63,8 +68,11 @@ export function PreparingArea() {
               className="ui red basic button"
               id="kesz"
               onClick={() => {
-                dispatch(changeState('IN_GAME'));
-                dispatch(startPlay());
+                // socket.emit('sync-state', room_number, board, true, function(answer){
+                //   console.log(answer);
+                // });
+                // dispatch(changeState('IN_GAME'));
+                // dispatch(startPlay());
               }}
             >
               Kész, kezdődhet a játék

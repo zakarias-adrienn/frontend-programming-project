@@ -1,22 +1,43 @@
 import React, { useState } from "react";
 import classNames from "classnames";
 import { useDispatch } from 'react-redux';
-import { changeState } from "../state/actions";
+import { changeState, setCurrentPlayer, setRoomNumber } from "../state/actions";
 
-export function MainPage({ room_number }) {
+export function MainPage({ socket }) {
   const dispatch = useDispatch(); 
   const [errorHappened, setErrorHappened] = useState(false);
+  let roomNumber = null;
 
   function verifyConnection() {
     const input = document.querySelector("#csatlakozas");
-    let entered_number = parseInt(input.value);
-    if (entered_number === room_number) {
-      setErrorHappened(false);
-      dispatch(changeState('PREPARE_GAME'));
-    } else {
-      setErrorHappened(true);
-    }
+    let entered_number = input.value;
+      socket.emit('join-room', entered_number, function(answer){
+        console.log(answer);
+        if(answer.status==='ok'){
+          setErrorHappened(false);
+        } else {
+          setErrorHappened(true);
+        } 
+      });   
   }
+
+  socket.on('player-joined', function(answer){
+    console.log(answer);
+  });
+  socket.on('room-is-full', function(answer){
+    console.log(answer);
+    let color;
+    if(answer.player===1){
+      color='red';
+    } else {
+      color='blue';
+    }
+    dispatch(setCurrentPlayer(color));
+    dispatch(changeState('PREPARE_GAME'));
+  });
+  socket.on('action-sent', function(answer){
+    dispatch(answer.action);
+  });
 
   return (
     <div
@@ -75,7 +96,16 @@ export function MainPage({ room_number }) {
                 className="ui red basic button"
                 id="uj_jatek"
                 onClick={() =>
-                  dispatch(changeState('WAITING_FOR_SECOND_PLAYER'))
+                  {
+                  socket.emit("create-room", function(answer){
+                    if(answer.status==='ok'){
+                      roomNumber = answer.roomId;
+                      dispatch(setRoomNumber(roomNumber));
+                      dispatch(changeState('WAITING_FOR_SECOND_PLAYER'));
+                    }
+                  });
+                  
+                  }
                 }
               >
                 Új játék indítása
@@ -91,12 +121,12 @@ export function MainPage({ room_number }) {
                 })}
               >
                 <div className="ui label">Szobaszám:</div>
-                <input type="number" id="csatlakozas" placeholder="123456" />
+                <input type="text" id="csatlakozas" placeholder="123456" />
               </div>
               <br />
               <br />
               {errorHappened ? (
-                <p style={{ color: "red" }}>Helytelen szobakód.</p>
+                <p style={{ color: "red" }}>Helytelen szobakód vagy a szoba már tele van vagy azonos klienssel történő bejelentkezés.</p>
               ) : null}
               <button
                 className="ui red basic button"

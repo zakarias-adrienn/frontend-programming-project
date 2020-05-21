@@ -1,13 +1,11 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { changeState } from "../state/actions";
 
 export function WaitingArea({
-  room_number,
-  setRoomNumber
 }) {
   const dispatch = useDispatch();
-  room_number = 100000 + Math.round(Math.random() * (999999 - 100000));
+  const room_number = useSelector(state => state.game.room_number);
   return (
     <div
       className="ui container"
@@ -15,7 +13,7 @@ export function WaitingArea({
     >
       <br />
       <br />
-      <div style={{ fontSize: "50px" }}>
+      <div style={{ fontSize: "30px" }}>
         Szobaszám: <output>{room_number}</output>
       </div>
       <br />
@@ -25,7 +23,6 @@ export function WaitingArea({
         id="vissza"
         onClick={() => {
           dispatch(changeState('MAIN_PAGE'));
-          setRoomNumber(room_number);
         }}
       >
         Vissza a főoldalra

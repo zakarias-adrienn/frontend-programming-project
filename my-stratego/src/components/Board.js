@@ -61,7 +61,8 @@ export function Board({
   chosenOne,
   setChosenOne,
   placedCharacterNumber,
-  setPlacedCharacterNumber
+  setPlacedCharacterNumber,
+  socket
 }) {
   const gameState = useSelector(state => state.gameState);
   const board = useSelector(state => state.game.board);
@@ -75,6 +76,9 @@ export function Board({
   const [firstFighter, setFirstFighter] = useState(-2);
   const [secondFighter, setSecondFighter] = useState(-2);
   const [winner, setWinner] = useState(null);
+  const currentPlayer = useSelector(state => state.game.currentPlayer);
+  const room_number = useSelector(state => state.game.room_number);
+  const game = useSelector(state => state.game);
 
   // valahol fel kellene használni
   // az új board nem elérhető csak következő rerenderkor ezért nem tudom ezt vizsgálni :(
@@ -117,13 +121,13 @@ export function Board({
 
   function calculateBackground(cell) {
     if (cell.placedNumber != null) {
-      if (cell.color !== activePlayer) {
-        if (cell.color === "blue") {
-          return "assets/Blue.jpg";
-        } else {
-          return "assets/Red.jpg";
-        }
-      }
+      // if (cell.color !== activePlayer) {
+      //   if (cell.color === "blue") {
+      //     return "assets/Blue.jpg";
+      //   } else {
+      //     return "assets/Red.jpg";
+      //   }
+      // }
       if (cell.placedNumber === 10) {
         if (cell.color === "blue") {
           return "assets/pieces-1-B.jpg";
@@ -199,14 +203,20 @@ export function Board({
     let y = e.target.cellIndex;
     let cell = board[x][y];
     if (chosenOne != null && cell.placedNumber == null) {
-      if (cell.x < 6) {
+      if (cell.x < 6 && currentPlayer==='red') {
+        return;
+      }
+      if (cell.x > 3 && currentPlayer==='blue') {
         return;
       }
       setNumbersNeeded({
         ...numbersNeeded,
         ["" + chosenOne]: numbersNeeded["" + chosenOne] - 1
       });
-      dispatch(placeCharacter(x, y, parseInt(chosenOne)));
+      dispatch(placeCharacter(x, y, parseInt(chosenOne), currentPlayer));
+      socket.emit('sync-action', room_number, placeCharacter(x, y, parseInt(chosenOne), currentPlayer), true, function(answer){
+        console.log(answer);
+      });
       console.log(x, y, parseInt(chosenOne));
       setChosenOne((chosenOne = null));
       setPlacedCharacterNumber(
@@ -381,9 +391,11 @@ export function Board({
     let r = row.map((cell, index) => {
       return (
         <td
-          style={ gameState==='PREPARE_GAME' && cell.x>=6 ? {border: "2px solid brown", borderCollapse: "collapse", margin: 0, padding: 0} : 
+          style=
+          { gameState==='PREPARE_GAME' && currentPlayer==='red' &&  cell.x>=6 ? {border: "2px solid brown", borderCollapse: "collapse", margin: 0, padding: 0} : 
+            gameState==='PREPARE_GAME' && currentPlayer==='blue' && cell.x<=3 ?  {border: "2px solid brown", borderCollapse: "collapse", margin: 0, padding: 0} :
           gameState==='IN_GAME' && cell.border ? {backgroundColor: "#F0E68C"} : null}
-          background={cell.border? {backgroundColor: "#F0E68C"} : calculateBackground(cell)}
+          background={cell.border ? {backgroundColor: "#F0E68C"} : calculateBackground(cell)}
           key={index}
           onClick={handleTdClick}
         />

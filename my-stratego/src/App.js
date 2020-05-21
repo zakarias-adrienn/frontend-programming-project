@@ -5,29 +5,30 @@ import { WaitingArea } from "./components/WaitingArea";
 import { GamePage } from "./components/GamePage";
 import { PreparingArea } from "./components/PreparingArea";
 import { useSelector } from 'react-redux';
+import io from "socket.io-client";
+
 
 function App() {
 
  const gameState = useSelector(state => state.gameState);
- const [room_number, setRoomNumber] = useState(0);
-
+ let socket = io("http://webprogramozas.inf.elte.hu:3030");
 
   if(gameState==='MAIN_PAGE'){
     return (
       <div className="ui center aligned container">
-          <MainPage room_number={room_number}></MainPage>
+          <MainPage socket={socket}></MainPage>
       </div>
     );
   } else if(gameState==='WAITING_FOR_SECOND_PLAYER'){
     return (
       <div className="ui center aligned container">
-          <WaitingArea room_number={room_number} setRoomNumber={setRoomNumber}></WaitingArea>
+          <WaitingArea></WaitingArea>
       </div>
     );
   } else if(gameState==='PREPARE_GAME'){
     return (
       <div className="ui center aligned container">
-          <PreparingArea></PreparingArea>
+          <PreparingArea socket={socket}></PreparingArea>
       </div>
     );
   } else if(gameState==='IN_GAME'){

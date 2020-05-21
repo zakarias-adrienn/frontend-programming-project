@@ -24,7 +24,11 @@ import {
   SHOW_POSSIBILITIES,
   showThePossibilities,
   removeTheSelections,
-  REMOVE_SELECTIONS
+  REMOVE_SELECTIONS,
+  SET_CURRENT_PLAYER,
+  setTheCurrentPlayer,
+  SET_ROOM_NUMBER,
+  setTheRoomNumber
 } from "./actions";
 
 let cells = [];
@@ -33,7 +37,6 @@ for (let i = 0; i < 10; ++i) {
   let row = [];
   for (let j = 0; j < 10; ++j) {
     let lake = false;
-    let cP = false;
     if (
       (i === 4 && j === 2) ||
       (i === 4 && j === 3) ||
@@ -46,15 +49,12 @@ for (let i = 0; i < 10; ++i) {
     ) {
       lake = true;
     }
-    if (i >= 6) {
-      cP = true;
-    }
     let cell = {
       id: k,
       x: i,
       y: j,
       isLake: lake,
-      canPlace: cP, // csak az alsó 4 sorba szabad
+      canPlace: true,
       placedNumber: null,
       color: null,
       border: false
@@ -71,6 +71,8 @@ for (let i = 0; i < 10; ++i) {
 export const getInitialState = () => ({
   gameState: 'MAIN_PAGE',
   game: {
+    room_number: null,
+    currentPlayer: null,
     activePlayer: "red",
     board: cells,
     blueDead: [],
@@ -110,6 +112,10 @@ export const mainReducer = (state = getInitialState().game, action) => {
       return { ...state, board: showThePossibilities(state.board, action.payload) };
     case REMOVE_SELECTIONS:
       return { ...state, board: removeTheSelections(state.board, action.payload) };
+    case SET_CURRENT_PLAYER:
+      return { ...state, currentPlayer: setTheCurrentPlayer(state.currentPlayer, action.payload)};
+    case SET_ROOM_NUMBER:
+      return { ...state, room_number: setTheRoomNumber(state.room_number, action.payload)};
     default:
       return state;
   }

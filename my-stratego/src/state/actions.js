@@ -11,10 +11,22 @@ export const RED_DEAD = "RED_DEAD";
 export const CHANGE_STATE = 'CHANGE_STATE';
 export const SHOW_POSSIBILITIES = 'SHOW_POSSIBILITIES';
 export const REMOVE_SELECTIONS = 'REMOVE_SELECTIONS';
+export const SET_CURRENT_PLAYER = 'SET_CURRENT_PLAYER';
+export const SET_ROOM_NUMBER = 'SET_ROOM_NUMBER';
 
-export const placeCharacter = (x, y, id) => ({
+export const setRoomNumber = (number) => ({
+  type: SET_ROOM_NUMBER,
+  payload: number
+});
+
+export const placeCharacter = (x, y, id, color) => ({
   type: PLACE_CHARACTER,
-  payload: { x, y, id }
+  payload: { x, y, id, color }
+});
+
+export const setCurrentPlayer = (color) => ({
+  type: SET_CURRENT_PLAYER,
+  payload: color
 });
 
 export const removeSelections = () => ({
@@ -67,6 +79,10 @@ export const move = (cell1, cell2) => ({
   payload: { cell1, cell2 }
 });
 
+export function setTheRoomNumber(room_number, number){
+  return number;
+}
+
 export function changeTheState(gameState, newState){
   console.log(newState);
   return newState;
@@ -114,6 +130,10 @@ export function removeTheSelections(board, payload) {
       }
     } 
     return newBoard;
+}
+
+export function setTheCurrentPlayer(currentPlayer, color){
+  return color;
 }
 
 export function showThePossibilities(board, c) {
@@ -343,7 +363,7 @@ export function startAPLay(board) {
   return newBoard;
 }
 
-export function placeACharacter(board, { x, y, id }) {
+export function placeACharacter(board, { x, y, id, color }) {
   let cell = null;
   for (let i = 0; i < board.length; ++i) {
     let r = board[i];
@@ -354,11 +374,9 @@ export function placeACharacter(board, { x, y, id }) {
     }
   }
   let iddd = cell.id;
-  if (cell.isLake || cell.placedNumber != null || cell.canPlace === false) {
+  if (cell.isLake || cell.placedNumber != null) {
     return board; // nem kell módosítani
   }
-  // most piros, de honnan tudom meg a szint?
-
   let alteredCell = {
     id: iddd,
     x: x,
@@ -366,7 +384,7 @@ export function placeACharacter(board, { x, y, id }) {
     isLake: false,
     canPlace: true,
     placedNumber: parseInt(id),
-    color: "red",
+    color: color,
     border: false
   };
   let newBoard = board.map(row => {
