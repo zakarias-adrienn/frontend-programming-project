@@ -417,11 +417,11 @@ export function Board({
           }
           // csata az erősebbet kell megadnom
           // de lesz olyan hogy mindkettőt le kell venni, akkor egy nullos placedNumbert kell megadjak
-          setTimeout(() => {
-            dispatch(fightComes(selectedForMoving, cell));
+          dispatch(fightComes(selectedForMoving, cell));
             socket.emit('sync-action', room_number, fightComes(selectedForMoving, cell), true, function(answer){
               console.log(answer);
             });
+          setTimeout(() => {
             setSelectedForMoving(null);
             let next;
             if(activePlayer==='red'){

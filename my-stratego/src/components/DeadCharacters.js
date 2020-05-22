@@ -71,15 +71,15 @@ export function DeadCharacters() {
   }
 
   function getBlueList() {
-    let ps = blueDeadEnemies.map(enemy => (
-      <img key={enemy.id} src={calculateBackground(enemy)} alt="" />
+    let ps = blueDeadEnemies.map((enemy,index) => (
+      <img key={enemy.id+index} src={calculateBackground(enemy)} alt="" />
     ));
     return ps;
   }
 
   function getRedList() {
-    let ps = redDeadEnemies.map(enemy => (
-      <img key={enemy.id} src={calculateBackground(enemy)} alt="" />
+    let ps = redDeadEnemies.map((enemy,index) => (
+      <img key={enemy.id+index} src={calculateBackground(enemy)} alt="" />
     ));
     return ps;
   }

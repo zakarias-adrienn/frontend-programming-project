@@ -10,6 +10,7 @@ export function GamePage() {
   const dispatch = useDispatch();
   const activePlayer = useSelector(state => state.game.activePlayer);
   const gameState = useSelector(state => state.gameState);
+  const room_number = useSelector(state => state.game.room_number);
 
   socket.on('player-left', function(answer){
     console.log(answer);
@@ -49,7 +50,7 @@ export function GamePage() {
               className="ui red basic button"
               id="vissza_fooldal"
               onClick={() => {
-                socket.emit('leave-room', function(answer){
+                socket.emit('leave-room', room_number, function(answer){
                   console.log(answer);
                 });
                 dispatch(resetBoard());
